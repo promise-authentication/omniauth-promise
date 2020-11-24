@@ -20,22 +20,47 @@ Or install it yourself as:
 
 ## Usage
 
+In `config/initializers/promise.rb` add
+
 ```ruby
 Rails.application.config.middleware.use OmniAuth::Builder do
   provider :promise, 'example.com'
 end
 ```
+Now redirect your users to
+```
+  <%= link_to 'login', '/auth/promise' %>
+```
+And make sure you have
+```ruby
+  get 'auth/promise/callback', to: "sessions#new"
+```
+in `config/routes.rb` and the corresponding controller in `app/controllers/sessions_controller.rb`:
+```ruby
+class SessionsController < ApplicationController
+  def new
+    @user_id = auth_hash[:uid]
+  end
+
+  protected
+
+  def auth_hash
+    request.env['omniauth.auth']
+  end
+end
+
+```
 
 Where `example.com` is your `client_id` with Promise.
 
-### With Rails
+### With Devise
 
 In `config/initializers/devise.rb` add
 
 ```ruby
-&hellip;
+...
 config.omniauth :github, 'example.com'
-&hellip;
+...
 ```
 
 Where `example.com` is your `client_id` with Promise.
