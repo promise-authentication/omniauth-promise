@@ -73,6 +73,8 @@ module OmniAuth
         fail!(:timeout, e)
       rescue Faraday::ConnectionFailed, Faraday::SSLError => e
         fail!(:service_unavailable, e)
+      rescue OmniAuth::NoSessionError => e
+        fail!(:possible_replay_attack, e)
       rescue CouldNotVerifyTokenError => e
         fail!(:could_not_verify_token, e)
       rescue NonceNotMatchingError => e
